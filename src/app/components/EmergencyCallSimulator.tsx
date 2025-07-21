@@ -28,7 +28,6 @@ const EmergencyCallSimulator: React.FC = () => {
     const MAX_RETRIES = 3;
     const RETRY_DELAY = 1000; // 1 second
     const [selectedTab, setSelectedTab] = useState<'history' | 'scenarios'>('scenarios');
-    const [selectedScenario, setSelectedScenario] = useState<EmergencyScenarioConfig | null>(null);
 
     // Function to check microphone permission
     const checkMicPermission = async () => {
@@ -148,7 +147,6 @@ const EmergencyCallSimulator: React.FC = () => {
 
         try {
             setIsStartingCall(true);
-            setSelectedScenario(scenario);
 
             if (micPermission === 'prompt') {
                 await requestMicAccess();
@@ -367,17 +365,6 @@ const EmergencyCallSimulator: React.FC = () => {
         }
 
         return chatMessages;
-    };
-
-    const downloadBlobAsFile = (blob: Blob, filename: string) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
     };
 
     return (

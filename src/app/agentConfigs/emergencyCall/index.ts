@@ -78,27 +78,7 @@ export function getScenarioVoiceInfo(scenarioKey: string): { characterType: stri
   };
 }
 
-// Optional utility to create new agents with the common intro
-function createDistressAgent({
-  name,
-  voice,
-  specificInstructions,
-  handoffDescription,
-}: {
-  name: string;
-  voice: string;
-  specificInstructions: string;
-  handoffDescription: string;
-}): RealtimeAgent {
-  return new RealtimeAgent({
-    name,
-    voice,
-    instructions: `${COMMON_INTRO}\n\n${specificInstructions}`,
-    handoffs: [],
-    tools: [],
-    handoffDescription,
-  });
-}
+
 
 // List of all emergency call scenarios (50 total) - Based on 911_all_scripts.json
 export const emergencyCallScenarios: EmergencyScenarioConfig[] = [

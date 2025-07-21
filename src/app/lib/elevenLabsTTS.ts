@@ -4,9 +4,6 @@
 // Place your ElevenLabs API key in an environment variable, e.g., process.env.ELEVENLABS_API_KEY
 // Place your desired voice ID (elderly female) below or pass as a parameter
 
-const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY || "YOUR_ELEVENLABS_API_KEY_HERE"; // <-- Replace or set in .env.local
-const DEFAULT_VOICE_ID = "y1adqrqs4jNaANXsIZnD"; // Test voice ID for differentiation
-
 // Simple queue to prevent concurrent TTS requests
 class TTSQueue {
   private queue: Array<() => Promise<void>> = [];

@@ -27,7 +27,7 @@ import { allAgentSets, defaultAgentSetKey } from "@/app/agentConfigs";
 import { simpleHandoffScenario } from "@/app/agentConfigs/simpleHandoff";
 import { customerServiceRetailScenario } from "@/app/agentConfigs/customerServiceRetail";
 import { chatSupervisorScenario } from "@/app/agentConfigs/chatSupervisor";
-import { emergencyCallScenario, getEmergencyCallScenarioByKey, getElevenLabsVoiceFromAgentName, getElevenLabsVoiceFromScenario, getScenarioVoiceInfo, getVoiceIdFromScenario } from "@/app/agentConfigs/emergencyCall";
+import { emergencyCallScenario, getEmergencyCallScenarioByKey, getElevenLabsVoiceFromAgentName, getVoiceIdFromScenario } from "@/app/agentConfigs/emergencyCall";
 
 const sdkScenarioMap: Record<string, RealtimeAgent[]> = {
   simpleHandoff: simpleHandoffScenario,
@@ -93,7 +93,7 @@ function App({ isCallActive, onCallEnd, callStartTime }: AppProps) {
         .catch(() => {
           // Ignore errors - stream might not exist
         });
-    } catch (err) {
+    } catch {
       // Ignore errors
     }
   };
@@ -579,7 +579,9 @@ function App({ isCallActive, onCallEnd, callStartTime }: AppProps) {
                     audioElementRef.current.onended = () => {
                       URL.revokeObjectURL(audioUrl);
                       // Optionally unmute after playback if you want SDK audio for other things
-                      audioElementRef.current && (audioElementRef.current.muted = false);
+                      if (audioElementRef.current) {
+                        audioElementRef.current.muted = false;
+                      }
                     };
                   } else if (audioBlob.size === 0) {
                     console.log("TTS unavailable - skipping audio playback");
@@ -870,7 +872,7 @@ function App({ isCallActive, onCallEnd, callStartTime }: AppProps) {
       await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for final data
 
       // Get audio blob and transcript
-      const audioBlob = getAudioBlob();
+      getAudioBlob();
       function stripHtml(html: string) {
         const div = document.createElement('div');
         div.innerHTML = html;
@@ -911,10 +913,7 @@ function App({ isCallActive, onCallEnd, callStartTime }: AppProps) {
       }
 
       const allAssistantBlobs = assistantAudioBlobs.current.map((obj: { itemId: string, blob: Blob }) => obj.blob);
-      let finalAudioBlob: Blob | null = null;
-      if (allAssistantBlobs.length > 0) {
-        finalAudioBlob = await concatenateAudioBlobs(allAssistantBlobs);
-      }
+      const finalAudioBlob = await concatenateAudioBlobs(allAssistantBlobs);
 
       // Save audio and transcript to backend
       if (finalAudioBlob && finalAudioBlob.size > 0) {
@@ -1083,42 +1082,6 @@ function App({ isCallActive, onCallEnd, callStartTime }: AppProps) {
 
   // Add recording status indicator to the UI
   const ttsPlayedFor = useRef(new Set());
-  // Add a manual test button for TTS API
-  const testTTS = () => {
-    fetch('/api/tts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: 'Hello, this is a test.', voiceId: 'y1adqrqs4jNaANXsIZnD' })
-    })
-      .then(r => {
-        if (!r.ok) throw new Error('TTS API error: ' + r.status);
-        return r.blob();
-      })
-      .then(b => {
-        const url = URL.createObjectURL(b);
-        const a = new Audio(url);
-
-        // Track this test audio object for cleanup
-        activeTTSAudio.current.add(a);
-
-        a.play();
-
-        a.onended = () => {
-          URL.revokeObjectURL(url);
-          // Remove from tracking when finished
-          activeTTSAudio.current.delete(a);
-        };
-
-        a.onerror = () => {
-          URL.revokeObjectURL(url);
-          // Remove from tracking on error
-          activeTTSAudio.current.delete(a);
-        };
-      })
-      .catch(e => {
-        alert('TTS test failed: ' + e.message);
-      });
-  };
   return (
     <div className="text-base flex flex-col h-screen bg-background text-foreground relative">
       <div className="p-5 text-lg font-semibold flex justify-between items-center bg-background border-b border-border">

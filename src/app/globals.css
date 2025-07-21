@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* 911 Reality Color Scheme */
+  --background: #f8f9fa;
+  /* Light grey background */
+  /* White background */
+  --foreground: #ffffff;
+  /* White text */
+  --primary: #de6d1c;
+  /* Orange rgb(222 109 28) for primary elements */
+  --secondary: #777c82;
+  /* Gray rgb(119 124 130) for secondary elements */
+  --accent: #de6d1c;
+  /* Same orange for accents */
+  --card-bg: #777c82;
+  /* Gray rgb(119 124 130) for card backgrounds */
+  --border: #333333;
+  /* Border color */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #f8f9fa;
+    /* Light grey background */
+    /* White background */
+    --foreground: #ffffff;
+    /* White text */
+    --primary: #de6d1c;
+    --secondary: #777c82;
+    --accent: #de6d1c;
+    --card-bg: #777c82;
+    /* Gray rgb(119 124 130) for card backgrounds */
+    --border: #333333;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
+/* Animations for transcript modal */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
